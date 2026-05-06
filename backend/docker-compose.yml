@@ -1,0 +1,34 @@
+    version: '3.8'
+
+    services:
+      mysql-db:
+        image: mysql:8.0
+        environment:
+
+          MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+
+
+          MYSQL_DATABASE: blood_donation_db
+          MYSQL_USER: ${DB_USERNAME}
+          MYSQL_PASSWORD: ${DB_PASSWORD}
+        ports:
+          - "3306:3306"
+        volumes:
+          - db-data:/var/lib/mysql
+
+      ebdms-backend:
+        build: .
+        ports:
+          - "8080:8080"
+        depends_on:
+          - mysql-db
+        environment:
+          DB_URL: jdbc:mysql://mysql-db:3306/blood_donation_db
+          DB_USERNAME: ${DB_USERNAME}
+          DB_PASSWORD: ${DB_PASSWORD}
+          MAIL_USERNAME: ${MAIL_USERNAME}
+          MAIL_PASSWORD: ${MAIL_PASSWORD}
+          JWT_SECRET: ${JWT_SECRET}
+
+    volumes:
+      db-data:
